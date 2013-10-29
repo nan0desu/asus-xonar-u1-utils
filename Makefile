@@ -1,16 +1,16 @@
 all: xonard xonarctl
 
 xonard: xonard.c
-	gcc -Wall -o $@ $^
+	gcc -Wall $(CFLAGS) -o $@ $^
 
 xonarctl: xonarctl.c
-	gcc -Wall -o $@ $^
+	gcc -Wall $(CFLAGS) -o $@ $^
 
 install: xonard xonarctl
-	cp -a 16-asus-xonar-u1.rules /etc/udev/rules.d/
-	cp -a 16-asus-xonar-u1.sh /etc/pm/sleep.d/
-	cp -a xonard /usr/local/bin/
-	cp -a xonarctl /usr/local/bin/
+	cp -a 16-asus-xonar-u1.rules $(DESTDIR)/etc/udev/rules.d/
+	cp -a 16-asus-xonar-u1.sh $(DESTDIR)/etc/pm/sleep.d/
+	cp -a xonard $(DESTDIR)/usr/bin/
+	cp -a xonarctl $(DESTDIR)/usr/bin/
 
 uninstall:
 	rm -rf /etc/udev/rules.d/16-asus-xonar-u1.rules
