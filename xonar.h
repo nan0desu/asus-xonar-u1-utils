@@ -63,8 +63,6 @@
 
 #endif
 
-#define ASUS_XONAR_VENDOR_ID 0x0b05
-#define ASUS_XONAR_PRODUCT_ID 0x1743
 
 //Setup of controls and leds
 //	bit 7 -> Enable interrupt to report the control status
