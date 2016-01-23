@@ -21,6 +21,16 @@
 
 static const char wheelPosMap[4] = { 0, 1, 3, 2 };
 
+#define XONAR_MODEL_U1 0
+#define XONAR_MODEL_U7 1
+
+#define XONAR_NB_MODELS 2
+static const short xonarDeviceIDs[XONAR_NB_MODELS][2] = {
+/* VENDOR  PRODUCT */
+  {0x0b05, 0x1743},
+  {0x1043, 0x857c}
+};
+
 #if ENABLE_CTL == 1
 int initIPC()
 {
@@ -258,6 +268,7 @@ void handleMute(int uinputfd)
 int main(int argc, char* argv[])
 {
 	int ret;
+        int model;
 	if(argc!=2)
 	{
 		fprintf(stderr,"Usage: %s /dev/hidrawN\n", argv[0]);
@@ -311,7 +322,16 @@ int main(int argc, char* argv[])
 	ioctl(hidfd, HIDIOCGRAWINFO, &devInfo);
     char logMessage[256];
     //Check if the peripheral is the good one
-    if (devInfo.vendor != ASUS_XONAR_VENDOR_ID) {
+    for (model = 0; model < XONAR_NB_MODELS; model++) {
+        if (devInfo.vendor == xonarDeviceIDs[model][0] && devInfo.product == xonarDeviceIDs[model][1]) {
+          break;
+        }
+    }
+    if (model == XONAR_NB_MODELS) {
+        logErrorMsgRaw("Could not find a supported sound card");
+        return 2;
+    }
+    /*if (devInfo.vendor != ASUS_XONAR_VENDOR_ID) {
         snprintf(logMessage, 256, "Wrong vendor id, expected '%x' got '%x'", ASUS_XONAR_VENDOR_ID, devInfo.vendor);
         logErrorMsgRaw(logMessage);
         return 2;
@@ -320,7 +340,7 @@ int main(int argc, char* argv[])
         snprintf(logMessage, 256, "Wrong product id, expected '%x' got '%x'", ASUS_XONAR_PRODUCT_ID, devInfo.product);
         logErrorMsgRaw(logMessage);
         return 2;
-    }
+    }*/
     snprintf(logMessage, 256, "VENDOR: %x, PRODUCT: %x", devInfo.vendor, devInfo.product);
 	logMsg(logMessage);
 	char nameBuffer[256];
@@ -421,9 +441,11 @@ int main(int argc, char* argv[])
 		}
 		wheelPos = newWheelPos;
 		//Handle button control
-		if((buf[6] & 4) && buttonPressed==0)
-			handleMute(uinputfd);
-		buttonPressed = (buf[6] & 4) >> 2;
+                if (model == XONAR_MODEL_U1) {
+		    if((buf[6] & 4) && buttonPressed==0)
+			    handleMute(uinputfd);
+		    buttonPressed = (buf[6] & 4) >> 2;
+                }
 	}
 #if ENABLE_CTL == 1
     }
