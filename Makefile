@@ -1,3 +1,5 @@
+PREFIX = /usr/local
+
 .PHONY: all custom install uninstall clean mrproper
 
 # Default keybinds are to media keys.
@@ -11,23 +13,23 @@ custom: mrproper xonard-custom xonarctl
 xonard-custom-opts = -D CUSTOM_KEYBIND=1
 
 xonard xonard-custom: xonard.c
-	gcc -Wall $($@-opts) -o $@ $^
+	gcc -Wall $(CFLAGS) $($@-opts) -o $@ $^
 
 xonarctl: xonarctl.c
-	gcc -Wall -o $@ $^
+	gcc -Wall $(CFLAGS) -o $@ $^
 
 install: xonard xonarctl uninstall
 	cp -a 16-asus-xonar-u1.rules /etc/udev/rules.d/
 	cp -a 16-asus-xonar-u1.sh /etc/pm/sleep.d/
-	cp -a xonard /usr/local/bin/
-	cp -a xonarctl /usr/local/bin/
+	cp -a xonard $(DESTDIR)$(PREFIX)/bin/xonard
+	cp -a xonarctl $(DESTDIR)$(PREFIX)/bin/xonarctl
 
 uninstall:
 	rm -rf /etc/udev/rules.d/16-asus-xonar-u1.rules
 	rm -rf /etc/pm/sleep.d/16-asus-xonar-u1.sh
 	killall -q xonard
-	rm -rf /usr/local/bin/xonard
-	rm -rf /usr/local/bin/xonarctl
+	rm -rf $(DESTDIR)$(PREFIX)/bin/xonard
+	rm -rf $(DESTDIR)$(PREFIX)/bin/xonarctl
 
 clean:
 	rm -rf *.o
