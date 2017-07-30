@@ -1,10 +1,10 @@
 # Xonar U1 audio controls
 
-Xonard: a simple daemon to handle the non standard audio controls on Asus Xonar U1 devices
-Copyright 2012-2015 Alessandro Pignotti
+Xonard: a simple daemon to handle the non standard audio controls on Asus Xonar U1 devices  
+Copyright 2012-2015 Alessandro Pignotti  
 
-Edited 2015 Giuseppe Cuccu
-Edited 2017 Nika Topolchanskaya
+Edited 2015 Giuseppe Cuccu  
+Edited 2017 Nika Topolchanskaya  
 
 ## Description
 
@@ -17,7 +17,7 @@ I've also reverse engineered how to configure the blinking of both the blue and 
 ## Installation
 
 - Clone the repo, compile and install:  
-    `git clone https://github.com/nan0desu/asus-xonar-u1-utils.git ~/xonar/`
+    `git clone https://github.com/nan0desu/asus-xonar-u1-utils.git ~/xonar/`  
     `cd ~/xonar/`  
     `make`  
     `sudo make install`
@@ -42,9 +42,14 @@ Here are some example bindings:
     Command: `xdotool key XF86AudioPlay`  
     Shortcut: press the volume knob
 
+## Scroller mode
+
+Compile with `make scroller`. Daemon will emulate mouse scroll wheel. Scroll direction can be reversed in xonar.h (CLOCK_WISE_OFFSET and COUNTER_CLOCK_WISE_OFFSET)
+
 ## Notes
 - The device number can differ, check with `ls /dev/hidraw*`.
 - The card number can differ, open `alsamixer` and press `F6` to find out.
+- Use evtest utility to monitor input events.
 - To once shortcuts are set at OS level, you can switch between setups with the following:
     - `make; sudo make install; sudo xonard /dev/hidraw0`
     - `make custom; sudo make install; sudo xonard /dev/hidraw0`
