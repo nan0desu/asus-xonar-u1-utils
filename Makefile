@@ -27,7 +27,7 @@ install: xonard xonarctl uninstall
 uninstall:
 	rm -rf /etc/udev/rules.d/16-asus-xonar-u1.rules
 	rm -rf /etc/pm/sleep.d/16-asus-xonar-u1.sh
-	killall -q xonard
+	killall -q xonard | true
 	rm -rf $(DESTDIR)$(PREFIX)/bin/xonard
 	rm -rf $(DESTDIR)$(PREFIX)/bin/xonarctl
 
