@@ -4,6 +4,7 @@ Xonard: a simple daemon to handle the non standard audio controls on Asus Xonar 
 Copyright 2012-2015 Alessandro Pignotti
 
 Edited 2015 Giuseppe Cuccu
+Edited 2017 Nika Topolchanskaya
 
 ## Description
 
@@ -16,7 +17,7 @@ I've also reverse engineered how to configure the blinking of both the blue and 
 ## Installation
 
 - Clone the repo, compile and install:  
-    `git clone git@github.com:giuseppecuccu/asus-xonar-u1-utils.git ~/xonar/`  
+    `git clone https://github.com/nan0desu/asus-xonar-u1-utils.git ~/xonar/`
     `cd ~/xonar/`  
     `make`  
     `sudo make install`
