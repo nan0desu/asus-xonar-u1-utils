@@ -10,9 +10,14 @@ all: mrproper xonard xonarctl
 custom: mrproper xonard-custom xonarctl
 	mv xonard-custom xonard
 
-xonard-custom-opts = -D CUSTOM_KEYBIND=1
+#Giant scroll wheel
+scroller: mrproper xonard-scroller xonarctl
+	mv xonard-scroller xonard
 
-xonard xonard-custom: xonard.c
+xonard-custom-opts = -D KEYBIND_CUSTOM=1
+xonard-scroller-opts = -D KEYBIND_SCROLLER=1
+
+xonard xonard-custom xonard-scroller: xonard.c
 	gcc -Wall $(CFLAGS) $($@-opts) -o $@ $^
 
 xonarctl: xonarctl.c

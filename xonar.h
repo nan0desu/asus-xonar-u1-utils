@@ -31,16 +31,22 @@
 #include <unistd.h>
 #include <string.h>
 
-#ifndef CUSTOM_KEYBIND
-//Default keybinding binds the xonar controls to the media keys
-#define CLOCK_WISE KEY_VOLUMEUP
-#define COUNTER_CLOCK_WISE KEY_VOLUMEDOWN
-#define PUSH KEY_MUTE
-#else
+#if defined(KEYBIND_CUSTOM)
 //Custom keybinding binds them to unused keys - here from Japanese keyboards
 #define CLOCK_WISE KEY_KATAKANA
 #define COUNTER_CLOCK_WISE KEY_HIRAGANA
 #define PUSH KEY_KATAKANAHIRAGANA
+#elif defined(KEYBIND_SCROLLER)
+//Emulate scroll wheel. Keyboard scroller emits KEY_SCROLLUP/KEY_SCROLLDOWN, use KEYBIND_CUSTOM for it.
+#define SCROLLER_TYPE REL_WHEEL
+#define CLOCK_WISE_OFFSET -1
+#define COUNTER_CLOCK_WISE_OFFSET 1
+#define PUSH BTN_LEFT
+#else 
+//Default keybinding binds the xonar controls to the media keys
+#define CLOCK_WISE KEY_VOLUMEUP
+#define COUNTER_CLOCK_WISE KEY_VOLUMEDOWN
+#define PUSH KEY_MUTE
 #endif
 
 //Change it to 0 to disable xonarctl and all user-level control.

@@ -135,6 +135,14 @@ void bailoutUinputConfig();
 void hookKeyEvents(int uinputfd);
 
 /**
+ * \brief Send a scroll event to an uinput file descriptor.
+ * \param[in] uinputfd uinput file descriptor.
+ * \param[in] scrollType type of scroll event, REL_*
+ * \param[in] scrollOffset coordinate offset
+ */
+void sendScroll(int uinputfd, int scrollType, int scrollOffset);
+
+/**
  * \brief Send a keypress to an uinput file descriptor.
  * \param[in] uinputfd uinput file descriptor.
  * \param[in] keyCode Keycode to send.

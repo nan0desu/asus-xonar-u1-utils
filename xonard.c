@@ -211,9 +211,35 @@ void bailoutUinputConfig()
 
 void hookKeyEvents(int uinputfd)
 {
+    //See: https://www.kernel.org/doc/Documentation/input/event-codes.txt
+    #if defined(KEYBIND_SCROLLER)
+    int evbit[] = { EV_REL, EV_SYN, EV_KEY };
+    int axes[] = { REL_X, REL_Y, REL_WHEEL, REL_HWHEEL }; // Mouse axes
+    int keys[] = { BTN_MOUSE, BTN_LEFT, BTN_RIGHT, BTN_MIDDLE, BTN_4, BTN_5 }; //Typical mice buttons
+
+	int ret, i;
+    for (i=0; i < 3; ++i)
+    {
+        ret=ioctl(uinputfd, UI_SET_EVBIT, evbit[i]);
+        if (ret < 0)
+            bailoutUinputConfig();
+    }   
+    for (i=0; i < 4; ++i)
+    {
+        ret=ioctl(uinputfd, UI_SET_RELBIT, axes[i]);
+        if (ret < 0)
+            bailoutUinputConfig();
+    }
+    for (i=0; i < 6; ++i)
+    {
+        ret=ioctl(uinputfd, UI_SET_KEYBIT, keys[i]);
+        if (ret < 0)
+            bailoutUinputConfig();
+    }
+    #else
     int evbit[] = { EV_KEY, EV_SYN };
     int keys[] = { CLOCK_WISE, COUNTER_CLOCK_WISE, PUSH };
-	int ret, i;
+    int ret, i;
     for (i=0; i < 2; ++i)
     {
         ret=ioctl(uinputfd, UI_SET_EVBIT, evbit[i]);
@@ -226,6 +252,27 @@ void hookKeyEvents(int uinputfd)
         if (ret < 0)
             bailoutUinputConfig();
     }
+    #endif
+}
+
+void sendScroll(int uinputfd, int scrollType, int scrollOffset)
+{
+        struct input_event ev;
+        memset(&ev, 0, sizeof(ev));
+
+        ev.type = EV_REL;
+        ev.code = scrollType;
+        ev.value = scrollOffset;
+        if(write(uinputfd, &ev, sizeof(ev)) < 0)
+            logErrorMsgRaw("Error while sending event - scroll.");
+
+        ev.type = EV_SYN;
+        ev.code = 0;
+        ev.value = 0;
+
+        if (write(uinputfd, &ev, sizeof(ev)) < 0)
+                logErrorMsgRaw("Error while sending event - scroll syn.");
+
 }
 
 void sendKeyPress(int uinputfd, int keyCode)
@@ -240,24 +287,32 @@ void sendKeyPress(int uinputfd, int keyCode)
         ev.code = keyCode;
         ev.value = i;
         if(write(uinputfd, &ev, sizeof(ev)) < 0)
-            logErrorMsgRaw("Error while sending event.");
+            logErrorMsgRaw("Error while sending event - key.");
     }
 	ev.type = EV_SYN;
 	ev.code = 0;
 	ev.value = 0;
 
 	if (write(uinputfd, &ev, sizeof(ev)) < 0)
-		logErrorMsgRaw("Error while sending event.");
+		logErrorMsgRaw("Error while sending event - key syn.");
 }
 
 void handleVolumeDown(int uinputfd)
 {
+    #if defined(KEYBIND_SCROLLER)
+    sendScroll(uinputfd, SCROLLER_TYPE, COUNTER_CLOCK_WISE_OFFSET);
+    #else
     sendKeyPress(uinputfd, COUNTER_CLOCK_WISE);
+    #endif
 }
 
 void handleVolumeUp(int uinputfd)
 {
+    #if defined(KEYBIND_SCROLLER)
+    sendScroll(uinputfd, SCROLLER_TYPE, CLOCK_WISE_OFFSET);
+    #else
     sendKeyPress(uinputfd, CLOCK_WISE);
+    #endif
 }
 
 void handleMute(int uinputfd)
@@ -298,7 +353,7 @@ int main(int argc, char* argv[])
 		return 2;
 	}
 
-	if(chdir("/tmp") < 0)
+	if(chdir("/run") < 0)
 	{
 		logErrorMsg("Error while changing directory");
 		return 2;
