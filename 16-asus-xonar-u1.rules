@@ -1,2 +1,3 @@
-ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0b05", ATTRS{idProduct}=="1743", RUN+="/usr/local/bin/xonard $root/$name"
-ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1043", ATTRS{idProduct}=="857c", RUN+="/usr/local/bin/xonard $root/$name"
+#Use with systemd. Will create new service for each device from template "asus-xonar@.service"
+ACTION=="add", KERNEL=="hidraw*", TAG+="systemd", ATTRS{idVendor}=="0b05", ATTRS{idProduct}=="1743", PROGRAM="/usr/bin/systemd-escape -p --template=asus-xonar@.service $env{DEVNAME}", ENV{SYSTEMD_WANTS}+="%c"
+ACTION=="add", KERNEL=="hidraw*", TAG+="systemd", ATTRS{idVendor}=="1043", ATTRS{idProduct}=="857c", PROGRAM="/usr/bin/systemd-escape -p --template=asus-xonar@.service $env{DEVNAME}", ENV{SYSTEMD_WANTS}+="%c"

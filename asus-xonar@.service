@@ -1,0 +1,9 @@
+[Unit]
+Description=ASUS Xonar daemon
+BindTo=%i.device
+After=%i.device
+
+[Service]
+Type=forking
+TimeoutStartSec=5
+ExecStart=/usr/local/bin/xonard /%I
